@@ -1,0 +1,124 @@
+const apiKeys = "cbf0971e9c427d58ec283234c8b2eb4c";
+const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+
+let inputElement = document.querySelector(".search input");
+let searchBtn = document.querySelector(".search button");
+let bgVideo = document.querySelector(".video");
+let weatherVedioEl = document.querySelector(".video source");
+let weatherIcon = document.querySelector(".weather-icon");
+let cityName = document.querySelector(".city");
+let tempEl = document.querySelector(".temp");
+let humidityEl = document.querySelector(".humidity");
+let windEl = document.querySelector(".wind");
+let humidityTextEl = document.getElementById("humidityText");
+let windSpeedTextEl = document.getElementById("windSpeedText");
+
+
+// console.log(weatherVedioEl);
+
+
+async function getWeatherData(city) {
+    let responseData = await fetch(apiUrl + city + `&appid=${apiKeys}`);
+
+    try {
+        if (!responseData.ok) {
+            throw new Error("city not found");
+        }
+
+        let data = await responseData.json();
+        console.log(data);
+        cityName.innerHTML = data.name;
+        tempEl.innerHTML = Math.round(data.main.temp) + "°C";
+        humidityEl.innerHTML = data.main.humidity + "%";
+        windEl.innerHTML = data.wind.speed + "kmph";
+
+
+        let condition = data.weather[0].main;
+
+
+        console.log(condition);
+
+
+
+        switch (condition) {
+            case "Clear":
+                weatherIcon.src = "clear.png";
+                weatherVedioEl.src = "Clear.mp4";
+                bgVideo.load();
+                cityName.classList.add("clearStyle");
+                humidityTextEl.classList.add("clearStyle");
+                windSpeedTextEl.classList.add("clearStyle");
+
+                break;
+            case "Clouds":
+                weatherIcon.src = "clouds.png";
+                weatherVedioEl.src = "Clouds.mp4";
+                bgVideo.load();
+                cityName.classList.add("cloudStyle");
+                humidityTextEl.classList.add("cloudStyle");
+                windSpeedTextEl.classList.add("cloudStyle");
+                break;
+            case "Drizzle":
+                weatherIcon.src = "drizzle.png";
+                weatherVedioEl.src = "Drizzle.mp4";
+                bgVideo.load();
+                cityName.classList.add("rainStyle");
+                humidityTextEl.classList.add("rainStyle");
+                windSpeedTextEl.classList.add("rainStyle");
+                break;
+            case "Mist":
+                weatherIcon.src = "mist.png";
+                weatherVedioEl.src = "Mist.mp4";
+                cityName.classList.add("snowStyle");
+                humidityTextEl.classList.add("snowStyle");
+                windSpeedTextEl.classList.add("snowStyle");
+                bgVideo.load();
+                break;
+            case "Rain" || "Thunderstorm":
+                weatherIcon.src = "rain.png";
+                weatherVedioEl.src = "Rain.mp4";
+                bgVideo.load();
+                cityName.classList.add("rainStyle");
+                humidityTextEl.classList.add("rainStyle");
+                windSpeedTextEl.classList.add("rainStyle");
+                break;
+            case "Snow":
+                weatherIcon.src = "snow.png";
+                weatherVedioEl.src = "Snow.mp4";
+                bgVideo.load();
+                cityName.classList.add("snowStyle");
+                humidityTextEl.classList.add("snowStyle");
+                windSpeedTextEl.classList.add("snowStyle");
+                break;
+            default:
+                weatherIcon.src = "clear.png";
+                weatherVedioEl.src = "Clear.mp4";
+                bgVideo.load();
+                break;
+        }
+    } catch (error) {
+        console.error(error.message);
+
+    }
+
+
+
+}
+
+
+
+
+
+searchBtn.addEventListener("click", (event) => {
+    let city = inputElement.value;
+    getWeatherData(city);
+
+})
+
+inputElement.addEventListener("keydown", (event) => {
+
+    if (event.key === "Enter") {
+        let city = inputElement.value;
+        getWeatherData(city);
+    }
+});
